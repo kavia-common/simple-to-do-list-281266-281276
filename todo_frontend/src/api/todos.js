@@ -5,8 +5,12 @@ const DEFAULT_TIMEOUT_MS = 15000;
  * We keep this dependency-free (no axios) to match the lightweight template.
  */
 async function fetchJson(path, { method = "GET", body, signal } = {}) {
+  // Prefer explicit env override, but default to the local dev backend (port 3001)
+  // so the app works out-of-the-box in the multi-container preview environment.
   const baseUrl =
-    process.env.REACT_APP_TODO_API_BASE_URL?.replace(/\/+$/, "") || "";
+    process.env.REACT_APP_TODO_API_BASE_URL?.replace(/\/*$/, "") ||
+    "http://localhost:3001";
+
   const url = `${baseUrl}${path}`;
 
   const controller = new AbortController();
